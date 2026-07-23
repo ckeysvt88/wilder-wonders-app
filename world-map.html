@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Range map</title>
+<script src="https://unpkg.com/d3@7.9.0/dist/d3.min.js" integrity="sha384-CjloA8y00+1SDAUkjs099PVfnY2KmDC2BZnws9kh8D/lX1s46w6EPhpXdqMfjK6i" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/topojson-client@3.1.0/dist/topojson-client.min.js" integrity="sha384-Ukv1p/xTma6P4/2bY5KzWBw+ydSpXmhCMtyciIQVDJ1RmOxtCYNMF1uXT9T63H67" crossorigin="anonymous"></script>
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; overflow: hidden; height: 100%; }
+  #map { width: 100%; height: 100%; display: block; }
+  #fallback { display:none; align-items:center; justify-content:center; height:100%; font: 13px/1.4 sans-serif; color:#82796a; text-align:center; padding:12px; box-sizing:border-box; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div id="fallback">Map unavailable offline</div>
+<script>
+(function () {
+  var params = new URLSearchParams(location.search);
+  var regions = (params.get('highlight') || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+  var bg = params.get('bg') || '#f5ead8';
+  var land = params.get('land') || '#dcd3c4';
+  var border = params.get('border') || '#f5ead8';
+  var accent = params.get('accent') || '#c67139';
+
+  var REGION_CENTROIDS = {
+    'Africa': [21, 3], 'Asia': [95, 40], 'Europe': [15, 52],
+    'North America': [-102, 45], 'South America': [-60, -18],
+    'Oceania': [140, -25], 'Antarctica': [0, -85],
+    'Arctic Ocean': [0, 82], 'Pacific Ocean': [-160, 5],
+    'Atlantic Ocean': [-32, 10], 'Indian Ocean': [75, -15]
+  };
+  var REGION_RADIUS = {
+    'Africa': 30, 'Asia': 38, 'Europe': 18, 'North America': 34,
+    'South America': 26, 'Oceania': 24, 'Antarctica': 22,
+    'Arctic Ocean': 26, 'Pacific Ocean': 30, 'Atlantic Ocean': 28, 'Indian Ocean': 26
+  };
+  // "Worldwide" highlights a broad, spread set of zones rather than one blob.
+  if (regions.indexOf('Worldwide') !== -1) {
+    regions = ['Africa', 'South America', 'Asia', 'Oceania', 'North America'];
+  }
+
+  var width = window.innerWidth || 800, height = window.innerHeight || 400;
+  var svg = d3.select('#map').append('svg')
+    .attr('viewBox', '0 0 ' + width + ' ' + height)
+    .attr('width', '100%').attr('height', '100%');
+
+  var projection = d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' });
+  var path = d3.geoPath(projection);
+
+  svg.append('path').attr('d', path({ type: 'Sphere' })).attr('fill', bg);
+
+  fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json')
+    .then(function (r) { return r.json(); })
+    .then(function (topology) {
+      var countries = topojson.feature(topology, topology.objects.countries);
+      svg.append('g').selectAll('path').data(countries.features).join('path')
+        .attr('d', path).attr('fill', land).attr('stroke', border).attr('stroke-width', 0.75);
+
+      var glow = svg.append('g');
+      regions.forEach(function (region) {
+        var c = REGION_CENTROIDS[region];
+        if (!c) return;
+        var r = REGION_RADIUS[region] || 26;
+        glow.append('path').datum(d3.geoCircle().center(c).radius(r)()).attr('d', path)
+          .attr('fill', accent).attr('opacity', 0.32);
+        glow.append('path').datum(d3.geoCircle().center(c).radius(r * 0.5)()).attr('d', path)
+          .attr('fill', accent).attr('opacity', 0.55);
+      });
+    })
+    .catch(function () {
+      document.getElementById('fallback').style.display = 'flex';
+    });
+})();
+</script>
+</body>
+</html>

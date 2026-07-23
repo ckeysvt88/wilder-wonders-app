@@ -1,0 +1,18 @@
+{
+  "name": "Wild Wonders — Animal Explorer",
+  "short_name": "Wild Wonders",
+  "description": "A safe, ad-free animal encyclopedia for curious kids.",
+  "start_url": "./index.html",
+  "id": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fbf3e6",
+  "theme_color": "#f2712f",
+  "categories": ["education", "kids"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }
+  ]
+}

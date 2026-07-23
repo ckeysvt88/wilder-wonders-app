@@ -1,0 +1,40 @@
+/* Wild Wonders — design tokens + base styles, ported from the Claude Design source. */
+:root {
+  --color-bg: oklch(97% 0.018 80); --color-surface: oklch(92% 0.032 75); --color-text: oklch(30% 0.04 50);
+  --color-accent: oklch(68% 0.19 40); --color-accent-2: oklch(70% 0.16 150);
+  --color-divider: color-mix(in srgb, var(--color-text) 16%, transparent);
+  --color-neutral-100: #f9f4ed; --color-neutral-200: #eee7db; --color-neutral-300: #dcd3c4;
+  --color-neutral-400: #c0b6a5; --color-neutral-500: #a19786; --color-neutral-600: #82796a;
+  --color-neutral-700: #645c50; --color-neutral-800: #474238; --color-neutral-900: #2e2b25;
+  --color-accent-100: oklch(96% 0.03 40); --color-accent-200: oklch(90% 0.07 40); --color-accent-300: oklch(84% 0.11 40);
+  --color-accent-400: oklch(77% 0.15 40); --color-accent-500: oklch(70% 0.19 40); --color-accent-600: oklch(62% 0.19 40);
+  --color-accent-700: oklch(52% 0.17 40); --color-accent-800: oklch(40% 0.14 40); --color-accent-900: oklch(30% 0.1 40);
+  --color-accent-2-100: oklch(96% 0.03 150); --color-accent-2-200: oklch(90% 0.07 150); --color-accent-2-300: oklch(84% 0.1 150);
+  --color-accent-2-400: oklch(77% 0.13 150); --color-accent-2-500: oklch(70% 0.16 150); --color-accent-2-600: oklch(62% 0.16 150);
+  --color-accent-2-700: oklch(50% 0.14 150); --color-accent-2-800: oklch(38% 0.11 150); --color-accent-2-900: oklch(28% 0.08 150);
+  --color-accent-3-100: oklch(95% 0.025 235); --color-accent-3-200: oklch(89% 0.05 235); --color-accent-3-500: oklch(65% 0.16 235);
+  --color-accent-3-600: oklch(57% 0.16 235); --color-accent-3-700: oklch(46% 0.14 235); --color-accent-3-800: oklch(35% 0.11 235);
+  --color-accent-4-100: oklch(95% 0.03 340); --color-accent-4-200: oklch(89% 0.06 340); --color-accent-4-500: oklch(68% 0.19 340);
+  --color-accent-4-600: oklch(60% 0.19 340); --color-accent-4-700: oklch(50% 0.17 340); --color-accent-4-800: oklch(38% 0.14 340);
+  --font-heading: "Baloo 2", system-ui, sans-serif; --font-body: "Nunito", system-ui, sans-serif;
+  --space-1: 4.4px; --space-2: 8.8px; --space-3: 13.2px; --space-4: 17.6px; --space-6: 26.4px; --space-8: 35.2px;
+  --radius-sm: 8px; --radius-md: 16px; --radius-lg: 28px;
+  --shadow-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); font-size: 17px; overscroll-behavior: none; }
+button, input { font-family: inherit; }
+h1, h2, h3 { margin: 0; }
+a { color: var(--color-accent-700); }
+a:hover { color: var(--color-accent-800); }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--color-accent) 30%, transparent); }
+input::placeholder { color: var(--color-neutral-500); }
+@keyframes ww-spin { to { transform: rotate(360deg); } }
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; }
+
+#app { position: fixed; inset: 0; overflow: hidden; background: var(--color-bg); display: flex; flex-direction: column; }
