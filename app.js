@@ -577,7 +577,7 @@ class App {
 
           <div style="display:flex;flex-direction:column;gap:var(--space-3);">
             <h2 style="font-family:var(--font-heading);font-size:23px;">Explore by Category</h2>
-            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:var(--space-3);">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:var(--space-3);">
               ${v.categoryTiles.map(cat => `
                 <button type="button" data-onclick="${A(cat.onSelect)}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:152px;padding:var(--space-3);border:none;border-radius:calc(var(--radius-lg) * 1.15);background:var(--color-surface);box-shadow:var(--shadow-sm);cursor:pointer;font-family:var(--font-heading);font-size:18px;color:var(--color-text);text-align:center;">
                   <div style="${cat.badgeStyle}">${icon(cat.icon, 34, cat.badgeFg)}</div>
