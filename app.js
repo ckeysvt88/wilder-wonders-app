@@ -815,8 +815,7 @@ class App {
           <button type="button" data-onclick="${A(v.galleryNext)}" aria-label="Next photo" style="position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 20%, transparent);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;padding:0;">${icon('chevron-right', 22, 'var(--color-bg)')}</button>
         </div>
         <div style="text-align:center;padding:var(--space-3) var(--space-4) calc(env(safe-area-inset-bottom, 0px) + var(--space-3));flex-shrink:0;color:var(--color-bg);">
-          <div style="font-size:16px;opacity:0.85;">${v.galleryImage ? esc(v.galleryImage.caption) : ''}</div>
-          <div style="font-size:14px;opacity:0.6;margin-top:2px;">${v.galleryIndexDisplay} / ${v.galleryCount}</div>
+          <div style="font-size:14px;opacity:0.6;">${v.galleryIndexDisplay} / ${v.galleryCount}</div>
         </div>
       </div>`;
 
