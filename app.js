@@ -66,6 +66,25 @@ function placeholderSrc(seedId, label) {
   return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
+// ── Real photo loading: photos/{id}{n}.{ext}, cascading through common
+// extensions, falling back to the generated placeholder if none exist yet. ──
+const ANIMALS_BY_ID = {};
+const PHOTO_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'JPG', 'JPEG', 'PNG', 'WEBP'];
+
+window.__photoFallback = function (el, id, n, step) {
+  if (step < PHOTO_EXTS.length) {
+    el.src = './photos/' + id + n + '.' + PHOTO_EXTS[step];
+    el.setAttribute('onerror', "window.__photoFallback(this,'" + id + "'," + n + "," + (step + 1) + ")");
+  } else {
+    el.removeAttribute('onerror');
+    el.src = placeholderSrc(id, ANIMALS_BY_ID[id] || id);
+  }
+};
+
+function photoImg(id, n, caption, style) {
+  return `<img src="./photos/${id}${n}.${PHOTO_EXTS[0]}" alt="${esc(caption)}" style="${style}" onerror="window.__photoFallback(this,'${id}',${n},1)">`;
+}
+
 // ── Delegated event-action registry (innerHTML can't hold live function refs) ──
 const Actions = {
   map: new Map(), id: 0,
@@ -83,7 +102,7 @@ function renderAnimalCard(animal, isFavorite, showSciName, onTap, onToggleFavori
   return `
     <div role="button" tabindex="0" aria-label="${esc(animal.name)}" data-onclick="${tapId}" data-onkeydown="${keyId}" style="display:flex;flex-direction:column;height:100%;width:100%;background:var(--color-surface);border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-sm);cursor:pointer;">
       <div style="position:relative;width:100%;aspect-ratio:1/1;flex-shrink:0;background:var(--color-neutral-200);">
-        <img src="${placeholderSrc(animal.id, animal.name)}" alt="${esc(hero.caption)}" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);">
+        ${photoImg(animal.id, 1, hero.caption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
         <button type="button" aria-label="${esc(favLabel)}" data-onclick="${favId}" style="position:absolute;top:8px;right:8px;width:42px;height:42px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
           ${renderIcon('heart', 22, favColor, 2.75, isFavorite)}
         </button>
@@ -116,7 +135,10 @@ class App {
   init() {
     fetch('./animals.json')
       .then(r => r.json())
-      .then(data => this.setState({ animals: data.animals || [], categories: data.categories || [], loading: false }))
+      .then(data => {
+        (data.animals || []).forEach(a => { ANIMALS_BY_ID[a.id] = a.name; });
+        this.setState({ animals: data.animals || [], categories: data.categories || [], loading: false });
+      })
       .catch(() => this.setState({ loading: false, loadError: true }));
     try {
       const favs = JSON.parse(localStorage.getItem('wildwonders_favorites') || '[]');
@@ -350,7 +372,7 @@ class App {
           .filter(f => f.value && f.value !== '—')
           .map(f => Object.assign({}, f, { valueStyle: factValueStyle(f.value) }));
         relatedAnimalsList = (currentAnimal.relatedIds || []).map(findAnimal).filter(Boolean).map(a => this.withFav(a));
-        detailThumbs = currentAnimal.images.map((img, idx) => Object.assign({}, img, { src: placeholderSrc(currentAnimal.id, currentAnimal.name), onSelect: () => this.openGallery(idx) }));
+        detailThumbs = currentAnimal.images.map((img, idx) => Object.assign({}, img, { n: idx + 1, onSelect: () => this.openGallery(idx) }));
         const st = STATUS_STYLES[currentAnimal.conservationStatus] || STATUS_STYLES['Not Evaluated'];
         statusStyle = 'display:inline-flex;align-items:center;padding:4px 12px;border-radius:999px;font-size:14px;font-weight:600;background:' + st.bg + ';color:' + st.fg + ';';
         const regionsParam = encodeURIComponent(currentAnimal.mapRegions.join(','));
@@ -509,7 +531,7 @@ class App {
               <div style="font-size:17px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">Animal of the Day</div>
             </div>
             <div role="button" tabindex="0" aria-label="${esc(v.animalOfDayName)}" data-onclick="${A(v.openAnimalOfDay)}" data-onkeydown="${A(v.animalOfDayKeyDown)}" style="position:relative;width:100%;aspect-ratio:3.4/1;max-height:220px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);cursor:pointer;">
-              <img src="${v.animalOfDayImageSrc}" alt="${esc(v.animalOfDayImageCaption)}" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);">
+              ${photoImg(v.animalOfDay.id, 1, v.animalOfDayImageCaption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
               <div style="position:absolute;inset:0;background:linear-gradient(to top, color-mix(in srgb, var(--color-text) 80%, transparent) 0%, transparent 60%);pointer-events:none;"></div>
               <button type="button" data-onclick="${A(v.toggleFavoriteOfDay)}" aria-label="${esc(v.animalOfDayFavLabel)}" style="position:absolute;top:16px;right:16px;width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
                 ${icon('heart', 22, v.animalOfDayFavColor, v.animalOfDayIsFav)}
@@ -637,7 +659,7 @@ class App {
       <div style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-5);">
           <div style="position:relative;width:100%;aspect-ratio:16/9;max-height:400px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);background:var(--color-neutral-200);">
-            <img src="${v.heroImageSrc}" alt="${esc(v.heroImage.caption)}" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);">
+            ${photoImg(v.currentAnimal.id, 1, v.heroImage.caption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
             <button type="button" data-onclick="${A(v.backOne)}" aria-label="Back" style="position:absolute;top:14px;left:14px;width:56px;height:56px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">${icon('chevron-left', 28, 'var(--color-text)')}</button>
             <button type="button" data-onclick="${A(v.toggleFavCurrent)}" aria-label="${esc(v.favToggleLabel)}" style="position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">${icon('heart', 28, v.favCurrentColor, v.isFavCurrentBool)}</button>
           </div>
@@ -676,7 +698,7 @@ class App {
             <div style="display:flex;gap:var(--space-2);overflow-x:auto;padding-bottom:4px;">
               ${v.detailThumbs.map(img => `
                 <button type="button" data-onclick="${A(img.onSelect)}" aria-label="View photo" style="flex-shrink:0;width:96px;height:96px;border-radius:var(--radius-md);overflow:hidden;border:none;padding:0;cursor:pointer;">
-                  <img src="${img.src}" alt="${esc(img.caption)}" style="width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);">
+                  ${photoImg(v.currentAnimal.id, img.n, img.caption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
                 </button>`).join('')}
             </div>
           </div>`}
@@ -788,7 +810,7 @@ class App {
         <div style="flex:1;min-height:0;display:flex;align-items:center;position:relative;padding:0 var(--space-4);">
           <button type="button" data-onclick="${A(v.galleryPrev)}" aria-label="Previous photo" style="position:absolute;left:var(--space-2);top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 20%, transparent);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;padding:0;">${icon('chevron-left', 22, 'var(--color-bg)')}</button>
           <div style="${v.galleryImageWrapStyle}" data-onclick="${A(v.toggleGalleryZoom)}">
-            <img src="${v.galleryImageSrc}" alt="${v.galleryImage ? esc(v.galleryImage.caption) : ''}" style="width:100%;height:100%;object-fit:cover;">
+            ${v.galleryImage ? photoImg(v.currentAnimal.id, v.galleryIndexDisplay, v.galleryImage.caption, 'width:100%;height:100%;object-fit:cover;') : ''}
           </div>
           <button type="button" data-onclick="${A(v.galleryNext)}" aria-label="Next photo" style="position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 20%, transparent);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;padding:0;">${icon('chevron-right', 22, 'var(--color-bg)')}</button>
         </div>
