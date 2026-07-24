@@ -1,0 +1,53 @@
+name: Fetch animal photos (Wikimedia -> iNaturalist -> GBIF)
+
+# Same shape as the existing workflow: scheduled + manual dispatch,
+# commits whatever changed back to the repo. Points at fetch_images.py
+# now instead of fetch_wikimedia.py: three sources with fallback
+# instead of one, same automation pattern.
+
+on:
+  workflow_dispatch:
+    inputs:
+      force_relookup:
+        description: "Re-resolve commonsCategory even for animals that already have one"
+        type: boolean
+        default: false
+  schedule:
+    - cron: '0 6 * * 1'  # Mondays at 06:00 UTC, infrequent on purpose,
+                          # see FEASIBILITY_STUDY.md on Wikimedia/iNaturalist
+                          # rate-limit etiquette. This only touches animals
+                          # not already marked "sourced", so a weekly run
+                          # against a 2,000-species roster mostly does
+                          # nothing once the roster is caught up.
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Fetch photos for any pending or needs-review animals
+        run: |
+          if [ "${{ github.event.inputs.force_relookup }}" = "true" ]; then
+            python3 scripts/fetch_images.py --force-relookup
+          else
+            python3 scripts/fetch_images.py
+          fi
+
+      - name: Commit changes if anything updated
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/animals.json
+          git diff --cached --quiet || git commit -m "Auto-update animal photos (Wikimedia/iNaturalist/GBIF)"
+          git push

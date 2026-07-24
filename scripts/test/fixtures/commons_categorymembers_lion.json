@@ -1,0 +1,68 @@
+{
+  "query": {
+    "pages": [
+      {
+        "pageid": 501,
+        "title": "File:Lion waiting in Namibia.jpg",
+        "imageinfo": [ {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Lion_waiting_in_Namibia.jpg",
+          "descriptionurl": "https://commons.wikimedia.org/wiki/File:Lion_waiting_in_Namibia.jpg",
+          "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/Lion_waiting_in_Namibia.jpg/1600px-Lion_waiting_in_Namibia.jpg",
+          "thumbwidth": 1600, "thumbheight": 1067, "width": 3888, "height": 2592,
+          "mime": "image/jpeg", "user": "Ikiwaner",
+          "extmetadata": {
+            "LicenseShortName": { "value": "CC BY-SA 3.0" },
+            "LicenseUrl": { "value": "https://creativecommons.org/licenses/by-sa/3.0" },
+            "Artist": { "value": "<a href=\"//commons.wikimedia.org/wiki/User:Ikiwaner\">Ikiwaner</a>" }
+          }
+        } ]
+      },
+      {
+        "pageid": 502,
+        "title": "File:Lion distribution map.svg",
+        "imageinfo": [ {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/9/9a/Lion_distribution_map.svg",
+          "descriptionurl": "https://commons.wikimedia.org/wiki/File:Lion_distribution_map.svg",
+          "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/Lion_distribution_map.svg/1600px-Lion_distribution_map.svg.png",
+          "thumbwidth": 1600, "thumbheight": 1000, "width": 2000, "height": 1250,
+          "mime": "image/svg+xml", "user": "MapMaker",
+          "extmetadata": {
+            "LicenseShortName": { "value": "CC BY-SA 4.0" },
+            "Artist": { "value": "MapMaker" }
+          }
+        } ]
+      },
+      {
+        "pageid": 503,
+        "title": "File:Lioness portrait Serengeti.jpg",
+        "imageinfo": [ {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Lioness_portrait_Serengeti.jpg",
+          "descriptionurl": "https://commons.wikimedia.org/wiki/File:Lioness_portrait_Serengeti.jpg",
+          "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Lioness_portrait_Serengeti.jpg/1600px-Lioness_portrait_Serengeti.jpg",
+          "thumbwidth": 1600, "thumbheight": 1200, "width": 4200, "height": 3150,
+          "mime": "image/jpeg", "user": "SerengetiPhotographer",
+          "extmetadata": {
+            "LicenseShortName": { "value": "CC0 1.0" },
+            "LicenseUrl": { "value": "https://creativecommons.org/publicdomain/zero/1.0/" },
+            "Artist": { "value": "SerengetiPhotographer" }
+          }
+        } ]
+      },
+      {
+        "pageid": 504,
+        "title": "File:Lion skeleton diagram.png",
+        "imageinfo": [ {
+          "url": "https://upload.wikimedia.org/wikipedia/commons/1/1c/Lion_skeleton_diagram.png",
+          "descriptionurl": "https://commons.wikimedia.org/wiki/File:Lion_skeleton_diagram.png",
+          "thumburl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Lion_skeleton_diagram.png/1600px-Lion_skeleton_diagram.png",
+          "thumbwidth": 1600, "thumbheight": 1100, "width": 1800, "height": 1238,
+          "mime": "image/png", "user": "AnatomyWiki",
+          "extmetadata": {
+            "LicenseShortName": { "value": "CC BY-SA 4.0" },
+            "Artist": { "value": "AnatomyWiki" }
+          }
+        } ]
+      }
+    ]
+  }
+}

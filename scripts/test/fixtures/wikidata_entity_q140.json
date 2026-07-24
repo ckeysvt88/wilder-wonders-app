@@ -1,0 +1,14 @@
+{
+  "entities": {
+    "Q140": {
+      "id": "Q140",
+      "sitelinks": {
+        "commonswiki": { "site": "commonswiki", "title": "Category:Panthera leo", "badges": [] },
+        "enwiki": { "site": "enwiki", "title": "Lion" }
+      },
+      "claims": {
+        "P373": [ { "mainsnak": { "datavalue": { "value": "Panthera leo" } } } ]
+      }
+    }
+  }
+}

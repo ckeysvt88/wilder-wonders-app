@@ -1,0 +1,22 @@
+{
+  "results": [
+    {
+      "key": 1234567890, "recordedBy": "J. Smith",
+      "media": [ {
+        "type": "StillImage",
+        "identifier": "https://inaturalist-open-data.s3.amazonaws.com/photos/2222222/original.jpg",
+        "license": "http://creativecommons.org/licenses/by/4.0/legalcode",
+        "creator": "another_photographer"
+      } ]
+    },
+    {
+      "key": 1234567891, "recordedBy": "Museum X",
+      "media": [ {
+        "type": "StillImage",
+        "identifier": "https://example.org/specimen123.jpg",
+        "license": "All rights reserved",
+        "creator": "Museum X"
+      } ]
+    }
+  ]
+}

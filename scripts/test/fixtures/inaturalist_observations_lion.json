@@ -1,0 +1,23 @@
+{
+  "total_results": 2,
+  "results": [
+    {
+      "id": 987654, "quality_grade": "research",
+      "photos": [ {
+        "id": 1111111, "license_code": "cc-by-nc",
+        "url": "https://static.inaturalist.org/photos/1111111/square.jpg",
+        "attribution": "(c) a_photographer, some rights reserved (CC BY-NC)",
+        "original_dimensions": { "width": 2048, "height": 1536 }
+      } ]
+    },
+    {
+      "id": 987655, "quality_grade": "research",
+      "photos": [ {
+        "id": 2222222, "license_code": "cc-by",
+        "url": "https://static.inaturalist.org/photos/2222222/square.jpg",
+        "attribution": "(c) another_photographer, some rights reserved (CC BY)",
+        "original_dimensions": { "width": 4000, "height": 3000 }
+      } ]
+    }
+  ]
+}
