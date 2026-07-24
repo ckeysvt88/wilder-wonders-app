@@ -81,9 +81,10 @@ window.__photoFallback = function (el, id, n, step) {
   }
 };
 
-function photoImg(id, n, caption, style, onload) {
+function photoImg(id, n, caption, style, onload, eager) {
   const onloadAttr = onload ? ` onload="${onload}"` : '';
-  return `<img src="./photos/${id}${n}.${PHOTO_EXTS[0]}" alt="${esc(caption)}" style="${style}" onerror="window.__photoFallback(this,'${id}',${n},1)"${onloadAttr}>`;
+  const loadingAttr = eager ? ' loading="eager"' : ' loading="lazy" decoding="async"';
+  return `<img src="./photos/${id}${n}.${PHOTO_EXTS[0]}" alt="${esc(caption)}" style="${style}" onerror="window.__photoFallback(this,'${id}',${n},1)"${onloadAttr}${loadingAttr}>`;
 }
 
 // ── Animal-of-the-day hero: switch a portrait photo to letterboxed / auto
@@ -470,7 +471,10 @@ class App {
     const tabLabelStyle = (active) => 'font-size:12px;font-weight:800;font-family:var(--font-body);color:' + tabColor(active) + ';';
     const tabIconWrapStyle = (active) => 'width:38px;height:38px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:' + (active ? 'var(--color-accent)' : 'transparent') + ';';
 
-    const galleryImageWrapStyle = 'width:100%;height:100%;max-width:600px;margin:0 auto;border-radius:var(--radius-md);overflow:hidden;cursor:' + (galleryZoomed ? 'zoom-out' : 'zoom-in') + ';transform:scale(' + (galleryZoomed ? 1.8 : 1) + ');transition:transform 0.25s ease;';
+    const galleryImageWrapStyle = 'width:100%;height:100%;max-width:900px;margin:0 auto;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;overflow:' + (galleryZoomed ? 'auto' : 'hidden') + ';cursor:' + (galleryZoomed ? 'zoom-out' : 'zoom-in') + ';';
+    const galleryImgStyle = galleryZoomed
+      ? 'display:block;flex-shrink:0;width:220%;max-width:none;height:auto;'
+      : 'display:block;width:100%;height:100%;object-fit:contain;';
 
     return {
       loading, showApp: !loading, showLoading: loading,
@@ -507,7 +511,7 @@ class App {
       detailThumbs, hasMultiplePhotos: detailThumbs.length > 1,
       statusStyle, mapIframeSrc, toggleFavCurrent: () => currentAnimal && this.toggleFavorite(currentAnimal.id),
 
-      galleryOpen, galleryImage, galleryImageSrc, galleryIndexDisplay: galleryIndex + 1, galleryCount, galleryImageWrapStyle,
+      galleryOpen, galleryImage, galleryImageSrc, galleryIndexDisplay: galleryIndex + 1, galleryCount, galleryImageWrapStyle, galleryImgStyle,
       closeGallery: this.closeGallery, galleryNext: this.galleryNext, galleryPrev: this.galleryPrev, toggleGalleryZoom: this.toggleGalleryZoom,
 
       quizTargetAnimal, quizClueTexts, quizChoices, quizRevealAnimal, quizWasCorrect,
@@ -568,7 +572,7 @@ class App {
               <div style="font-size:17px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">Animal of the Day</div>
             </div>
             <div role="button" tabindex="0" aria-label="${esc(v.animalOfDayName)}" data-onclick="${A(v.openAnimalOfDay)}" data-onkeydown="${A(v.animalOfDayKeyDown)}" style="position:relative;width:100%;aspect-ratio:1.7/1;max-height:440px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);cursor:pointer;">
-              ${photoImg(v.animalOfDay.id, 1, v.animalOfDayImageCaption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);', 'window.__aodImgLoad(this)')}
+              ${photoImg(v.animalOfDay.id, 1, v.animalOfDayImageCaption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);', 'window.__aodImgLoad(this)', true)}
               <div style="position:absolute;inset:0;background:linear-gradient(to top, color-mix(in srgb, var(--color-text) 80%, transparent) 0%, transparent 60%);pointer-events:none;"></div>
               <button type="button" data-onclick="${A(v.toggleFavoriteOfDay)}" aria-label="${esc(v.animalOfDayFavLabel)}" style="position:absolute;top:16px;right:16px;width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
                 ${icon('heart', 22, v.animalOfDayFavColor, v.animalOfDayIsFav)}
@@ -696,7 +700,7 @@ class App {
       <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-5);">
           <div style="position:relative;width:100%;aspect-ratio:16/9;max-height:400px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);background:var(--color-neutral-200);">
-            ${photoImg(v.currentAnimal.id, 1, v.heroImage.caption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
+            ${photoImg(v.currentAnimal.id, 1, v.heroImage.caption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);', null, true)}
             <button type="button" data-onclick="${A(v.backOne)}" aria-label="Back" style="position:absolute;top:14px;left:14px;width:56px;height:56px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">${icon('chevron-left', 28, 'var(--color-text)')}</button>
             <button type="button" data-onclick="${A(v.toggleFavCurrent)}" aria-label="${esc(v.favToggleLabel)}" style="position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">${icon('heart', 28, v.favCurrentColor, v.isFavCurrentBool)}</button>
           </div>
@@ -847,7 +851,7 @@ class App {
         <div style="flex:1;min-height:0;display:flex;align-items:center;position:relative;padding:0 var(--space-4);">
           <button type="button" data-onclick="${A(v.galleryPrev)}" aria-label="Previous photo" style="position:absolute;left:var(--space-2);top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 20%, transparent);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;padding:0;">${icon('chevron-left', 22, 'var(--color-bg)')}</button>
           <div style="${v.galleryImageWrapStyle}" data-onclick="${A(v.toggleGalleryZoom)}">
-            ${v.galleryImage ? photoImg(v.currentAnimal.id, v.galleryIndexDisplay, v.galleryImage.caption, 'width:100%;height:100%;object-fit:cover;') : ''}
+            ${v.galleryImage ? photoImg(v.currentAnimal.id, v.galleryIndexDisplay, v.galleryImage.caption, v.galleryImgStyle, null, true) : ''}
           </div>
           <button type="button" data-onclick="${A(v.galleryNext)}" aria-label="Next photo" style="position:absolute;right:var(--space-2);top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 20%, transparent);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;padding:0;">${icon('chevron-right', 22, 'var(--color-bg)')}</button>
         </div>
