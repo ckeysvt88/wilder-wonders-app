@@ -81,9 +81,29 @@ window.__photoFallback = function (el, id, n, step) {
   }
 };
 
-function photoImg(id, n, caption, style) {
-  return `<img src="./photos/${id}${n}.${PHOTO_EXTS[0]}" alt="${esc(caption)}" style="${style}" onerror="window.__photoFallback(this,'${id}',${n},1)">`;
+function photoImg(id, n, caption, style, onload) {
+  const onloadAttr = onload ? ` onload="${onload}"` : '';
+  return `<img src="./photos/${id}${n}.${PHOTO_EXTS[0]}" alt="${esc(caption)}" style="${style}" onerror="window.__photoFallback(this,'${id}',${n},1)"${onloadAttr}>`;
 }
+
+// ── Animal-of-the-day hero: switch a portrait photo to letterboxed / auto
+// height instead of forcing it into the wide default crop. ──
+window.__aodImgLoad = function (img) {
+  const box = img.parentElement;
+  if (!box) return;
+  if (img.naturalWidth && img.naturalHeight && img.naturalHeight > img.naturalWidth) {
+    box.style.aspectRatio = 'auto';
+    box.style.maxHeight = '560px';
+    box.style.display = 'flex';
+    box.style.justifyContent = 'center';
+    box.style.background = 'var(--color-neutral-200)';
+    img.style.width = 'auto';
+    img.style.maxWidth = '100%';
+    img.style.height = 'auto';
+    img.style.maxHeight = '560px';
+    img.style.objectFit = 'contain';
+  }
+};
 
 // ── Delegated event-action registry (innerHTML can't hold live function refs) ──
 const Actions = {
@@ -298,12 +318,29 @@ class App {
     if (el) { el.focus(); try { el.setSelectionRange(f.start, f.end); } catch (e) {} }
   }
 
+  // ── Scroll preservation: only carried over when re-rendering the same
+  // screen (e.g. toggling a favorite) — a real screen change still opens at
+  // the top, since innerHTML replacement would otherwise reset scroll every
+  // single render. ──
+  currentScreenKey() {
+    const top = this.state.stack[this.state.stack.length - 1];
+    return top.screen + ':' + (top.animalId || top.categoryId || '');
+  }
+
   render() {
     Actions.reset();
     const v = this.renderVals();
     const focus = this.captureFocus();
+    const screenKey = this.currentScreenKey();
+    const sameScreenEl = screenKey === this._lastScreenKey ? document.getElementById('ww-screen-scroll') : null;
+    const scrollTop = sameScreenEl ? sameScreenEl.scrollTop : 0;
     this.root.innerHTML = this.template(v);
     this.restoreFocus(focus);
+    if (sameScreenEl) {
+      const el = document.getElementById('ww-screen-scroll');
+      if (el) el.scrollTop = scrollTop;
+    }
+    this._lastScreenKey = screenKey;
   }
 
   renderVals() {
@@ -511,7 +548,7 @@ class App {
     }
 
     const homeScreen = !v.isHome ? '' : `
-      <div style="position:absolute;inset:0;overflow-y:auto;">
+      <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-6);">
           <div style="display:flex;flex-direction:column;gap:var(--space-3);padding-top:var(--space-2);">
             <div style="display:flex;align-items:center;gap:10px;">
@@ -530,8 +567,8 @@ class App {
               ${icon('sparkles', 22, 'var(--color-accent-700)')}
               <div style="font-size:17px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;">Animal of the Day</div>
             </div>
-            <div role="button" tabindex="0" aria-label="${esc(v.animalOfDayName)}" data-onclick="${A(v.openAnimalOfDay)}" data-onkeydown="${A(v.animalOfDayKeyDown)}" style="position:relative;width:100%;aspect-ratio:3.4/1;max-height:220px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);cursor:pointer;">
-              ${photoImg(v.animalOfDay.id, 1, v.animalOfDayImageCaption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
+            <div role="button" tabindex="0" aria-label="${esc(v.animalOfDayName)}" data-onclick="${A(v.openAnimalOfDay)}" data-onkeydown="${A(v.animalOfDayKeyDown)}" style="position:relative;width:100%;aspect-ratio:1.7/1;max-height:440px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);cursor:pointer;">
+              ${photoImg(v.animalOfDay.id, 1, v.animalOfDayImageCaption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);', 'window.__aodImgLoad(this)')}
               <div style="position:absolute;inset:0;background:linear-gradient(to top, color-mix(in srgb, var(--color-text) 80%, transparent) 0%, transparent 60%);pointer-events:none;"></div>
               <button type="button" data-onclick="${A(v.toggleFavoriteOfDay)}" aria-label="${esc(v.animalOfDayFavLabel)}" style="position:absolute;top:16px;right:16px;width:48px;height:48px;border-radius:999px;border:none;background:color-mix(in srgb, var(--color-bg) 88%, transparent);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;">
                 ${icon('heart', 22, v.animalOfDayFavColor, v.animalOfDayIsFav)}
@@ -543,11 +580,11 @@ class App {
           </div>`}
 
           <div style="display:flex;gap:var(--space-3);flex-wrap:wrap;">
-            <button type="button" data-onclick="${A(v.startQuiz)}" style="flex:1;min-width:180px;display:flex;align-items:center;gap:12px;min-height:64px;padding:0 20px;border-radius:calc(var(--radius-lg) * 1.15);border:none;background:var(--color-accent-100);color:var(--color-accent-800);cursor:pointer;font-family:var(--font-heading);font-size:18px;">
+            <button type="button" data-onclick="${A(v.startQuiz)}" style="flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;padding:0 20px;border-radius:calc(var(--radius-lg) * 1.15);border:none;background:var(--color-accent-100);color:var(--color-accent-800);cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:18px;text-align:center;">
               ${icon('puzzle', 24, 'var(--color-accent-700)')}
               Guess the Animal
             </button>
-            <button type="button" data-onclick="${A(v.goRandomTab)}" style="flex:1;min-width:180px;display:flex;align-items:center;gap:12px;min-height:64px;padding:0 20px;border-radius:calc(var(--radius-lg) * 1.15);border:none;background:var(--color-accent-2-100);color:var(--color-accent-2-800);cursor:pointer;font-family:var(--font-heading);font-size:18px;">
+            <button type="button" data-onclick="${A(v.goRandomTab)}" style="flex:1;min-width:180px;display:flex;align-items:center;justify-content:center;gap:12px;min-height:64px;padding:0 20px;border-radius:calc(var(--radius-lg) * 1.15);border:none;background:var(--color-accent-2-100);color:var(--color-accent-2-800);cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:18px;text-align:center;">
               ${icon('shuffle', 24, 'var(--color-accent-2-700)')}
               Surprise Me
             </button>
@@ -589,7 +626,7 @@ class App {
       </div>`;
 
     const searchScreen = !v.isSearch ? '' : `
-      <div style="position:absolute;inset:0;overflow-y:auto;">
+      <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-4);">
           <h1 style="font-family:var(--font-heading);font-size:30px;">Search</h1>
           <div style="display:flex;align-items:center;gap:10px;min-height:56px;padding:0 18px;border-radius:999px;background:var(--color-surface);box-shadow:var(--shadow-sm);">
@@ -613,7 +650,7 @@ class App {
       </div>`;
 
     const favoritesScreen = !v.isFavorites ? '' : `
-      <div style="position:absolute;inset:0;overflow-y:auto;">
+      <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-4);">
           <h1 style="font-family:var(--font-heading);font-size:30px;">Favorites</h1>
           ${!v.hasFavorites ? '' : `
@@ -630,7 +667,7 @@ class App {
       </div>`;
 
     const categoryScreen = !v.isCategory ? '' : `
-      <div style="position:absolute;inset:0;overflow-y:auto;">
+      <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-4);">
           <div style="display:flex;align-items:center;gap:10px;">
             <button type="button" data-onclick="${A(v.backOne)}" aria-label="Back" style="width:52px;height:52px;border-radius:999px;border:none;background:var(--color-surface);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0;">${icon('chevron-left', 20, 'var(--color-text)')}</button>
@@ -656,7 +693,7 @@ class App {
       </div>`;
 
     const detailScreen = !v.isDetail || !v.hasCurrentAnimal ? '' : `
-      <div style="position:absolute;inset:0;overflow-y:auto;">
+      <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:1300px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-5);">
           <div style="position:relative;width:100%;aspect-ratio:16/9;max-height:400px;border-radius:calc(var(--radius-lg) * 1.15);overflow:hidden;box-shadow:var(--shadow-md);background:var(--color-neutral-200);">
             ${photoImg(v.currentAnimal.id, 1, v.heroImage.caption, 'width:100%;height:100%;object-fit:cover;filter:saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);')}
@@ -723,7 +760,7 @@ class App {
       </div>`;
 
     const quizScreen = !v.isQuiz ? '' : `
-      <div style="position:absolute;inset:0;overflow-y:auto;">
+      <div id="ww-screen-scroll" style="position:absolute;inset:0;overflow-y:auto;">
         <div style="max-width:860px;margin:0 auto;padding:var(--space-4) var(--space-4) 120px;display:flex;flex-direction:column;gap:var(--space-4);">
           <div style="display:flex;align-items:center;gap:10px;">
             <button type="button" data-onclick="${A(v.backOne)}" aria-label="Back" style="width:40px;height:40px;border-radius:999px;border:none;background:var(--color-surface);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0;">${icon('chevron-left', 20, 'var(--color-text)')}</button>
