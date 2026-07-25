@@ -2409,58 +2409,16 @@
       ],
       "images": [
         {
-          "source": "pexels",
-          "author": "Mateo Trujillo",
-          "license": "Pexels License",
-          "license_url": "https://www.pexels.com/license/",
-          "source_url": "https://www.pexels.com/photo/close-up-of-ball-python-coiled-on-black-background-35854403/",
-          "quality": {
-            "width": 4000,
-            "height": 6000,
-            "aspect_ratio": 0.667,
-            "orientation": "portrait",
-            "file_size_bytes": 1686402,
-            "format": "JPEG",
-            "sharpness_score": 9.2,
-            "dhash": "808007e18cbc0b52",
-            "likely_illustration": {
-              "flag": false,
-              "confidence": "low",
-              "signal": 0.1847
-            },
-            "possible_watermark": {
-              "flag": false,
-              "confidence": "low",
-              "signal": 0.684
-            }
-          }
+          "source": "existing"
         },
         {
-          "source": "pexels",
-          "author": "mauro camicia",
-          "license": "Pexels License",
-          "license_url": "https://www.pexels.com/license/",
-          "source_url": "https://www.pexels.com/photo/serpente-28184524/",
-          "quality": {
-            "width": 4898,
-            "height": 3265,
-            "aspect_ratio": 1.5,
-            "orientation": "landscape",
-            "file_size_bytes": 847545,
-            "format": "JPEG",
-            "sharpness_score": 14.3,
-            "dhash": "3d3c3c3a6ad99c6c",
-            "likely_illustration": {
-              "flag": false,
-              "confidence": "low",
-              "signal": 0.781
-            },
-            "possible_watermark": {
-              "flag": false,
-              "confidence": "low",
-              "signal": 0.656
-            }
-          }
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
         },
         {
           "source": "pexels",
