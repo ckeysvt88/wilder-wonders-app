@@ -1856,6 +1856,63 @@
       ]
     },
     {
+      "id": "fox",
+      "name": "Red Fox",
+      "sciName": "Vulpes vulpes",
+      "categories": [
+        "mammals",
+        "nocturnal-animals"
+      ],
+      "conservationStatus": "Least Concern",
+      "nicknames": [],
+      "quickFacts": {
+        "height": "14–16 in at shoulder (35–40 cm)",
+        "weight": "8–15 lbs (3.6–6.8 kg)",
+        "length": "18–35 in (46–90 cm)",
+        "lifespan": "3–5 years in the wild",
+        "diet": "Omnivore",
+        "habitat": "Forests, grasslands & suburbs",
+        "speed": "Up to 30 mph (48 km/h)",
+        "range": "North America, Europe & Asia"
+      },
+      "funFact": "A red fox can hear a mouse squeaking underground and will leap high in the air to pounce straight down on it through snow.",
+      "blurb": "The most widespread wild carnivore on Earth, red foxes thrive everywhere from deep forests to city streets thanks to their sharp senses and a diet that will take almost anything.",
+      "mapRegions": [
+        "North America",
+        "Europe",
+        "Asia"
+      ],
+      "mapCaption": "Forests, grasslands & suburbs across three continents",
+      "traits": {
+        "size": "Small",
+        "dangerLevel": "Low",
+        "canFly": false,
+        "canSwim": true,
+        "canClimb": false,
+        "canBePet": false,
+        "nocturnal": true,
+        "endangered": false,
+        "diet": "Omnivore",
+        "habitatTag": "Forest"
+      },
+      "relatedIds": [
+        "arctic-fox",
+        "fennec-fox",
+        "rabbit"
+      ],
+      "images": [
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        }
+      ]
+    },
+    {
       "id": "arctic-fox",
       "name": "Arctic Fox",
       "sciName": "Vulpes lagopus",
