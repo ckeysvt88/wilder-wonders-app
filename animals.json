@@ -2409,18 +2409,6 @@
       ],
       "images": [
         {
-          "source": "existing"
-        },
-        {
-          "source": "existing"
-        },
-        {
-          "source": "existing"
-        },
-        {
-          "source": "existing"
-        },
-        {
           "source": "pexels",
           "author": "Pixabay",
           "license": "Pexels License",
@@ -2446,6 +2434,18 @@
               "signal": 0.168
             }
           }
+        },
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
         }
       ]
     },
