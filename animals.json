@@ -10844,6 +10844,62 @@
       ]
     },
     {
+      "id": "deer",
+      "name": "White-Tailed Deer",
+      "sciName": "Odocoileus virginianus",
+      "categories": [
+        "mammals"
+      ],
+      "conservationStatus": "Least Concern",
+      "nicknames": [
+        "Whitetail"
+      ],
+      "quickFacts": {
+        "height": "3–3.5 ft at shoulder (0.9–1.1 m)",
+        "weight": "90–300 lbs (40–136 kg)",
+        "length": "4.5–7 ft (1.4–2.1 m)",
+        "lifespan": "6–14 years in the wild",
+        "diet": "Herbivore",
+        "habitat": "Forests, fields & suburbs",
+        "speed": "Up to 30 mph (48 km/h)",
+        "range": "North & Central America"
+      },
+      "funFact": "White-tailed deer flash the white underside of their tail like a warning flag to alert other deer when danger is near.",
+      "blurb": "One of the most widespread large mammals in the Americas, white-tailed deer get their name from the flash of white fur under their tail when they bound away.",
+      "mapRegions": [
+        "North America"
+      ],
+      "mapCaption": "Forests and fields across North America",
+      "traits": {
+        "size": "Medium",
+        "dangerLevel": "Low",
+        "canFly": false,
+        "canSwim": true,
+        "canClimb": false,
+        "canBePet": false,
+        "nocturnal": false,
+        "endangered": false,
+        "diet": "Herbivore",
+        "habitatTag": "Forest"
+      },
+      "relatedIds": [
+        "fox",
+        "rabbit",
+        "reindeer"
+      ],
+      "images": [
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        },
+        {
+          "source": "existing"
+        }
+      ]
+    },
+    {
       "id": "reindeer",
       "name": "Reindeer",
       "sciName": "Rangifer tarandus",
